@@ -1,0 +1,25 @@
+.main {
+    /* margin: 20px; */
+    width: 90%;
+    height: 50%;
+    margin-left: 30px;
+    padding: 20px;
+}
+
+.line {
+    margin-bottom: 50px;
+}
+
+.grid {
+    margin-top: 50px;
+    text-align: center;
+    margin-left: 150px;
+}
+
+.pie {
+    margin-top: 50px;
+}
+
+.alert {
+    margin-top: 100px;
+}
