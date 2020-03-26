@@ -116,7 +116,7 @@ export default function Chart() {
   const [activeCases, setActiveCases] = useState('')
   const [deaths, setDeaths] = useState('')
   const [recoveredCases, setRecoveredCases] = useState('')
-  const [isMaintenanceModeOn, setMaintenance] = useState(true)
+  const [isMaintenanceModeOn, setMaintenance] = useState(false)
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -153,112 +153,76 @@ export default function Chart() {
   useEffect(() => {
     fetch("https://pomber.github.io/covid19/timeseries.json")
       .then(response => response.json())
-      .then(res => {setCountries(Object.keys(res))})
-      .catch(err => {alert("hi")})
-
-    // fetch("https://corona.lmao.ninja/countries")
-    //   .then(response => response.json())
-    //   .then(res => {
-    //       setCountries(res.map(o => {
-    //           all_countries.push(o.country)
-    //           return o.country
-    //       }))
-    //   })
-    //   .catch(err => {
-    //     alert("hi")
-    //   })
+      .then(res => {
+        setCountries(Object.keys(res).map(country => {
+          all_countries.push(country)
+          return country
+        }))
+      })
+      .catch(err => console.log("could not fetch countries"))
   },[])
 
   useEffect(() => {
     if(selectedCountry) {
       fetch("https://pomber.github.io/covid19/timeseries.json")
       .then(response => response.json())
-      .then(data => {
-        // data[`${selectedCountry}`].forEach(({ date, confirmed, recovered, deaths }) =>
-        // let covid_obj = {}
-        //     covid_obj.label = res.standardizedCountryName.toUpperCase()
-        //     covid_obj.fill = false;
-        //     covid_obj.lineTension = 0.1;
-        //     covid_obj.backgroundColor ='rgba(75,192,192,0.4)';
-        //     covid_obj.borderColor = 'rgba(75,192,192,1)';
-        //     covid_obj.borderCapStyle = 'butt';
-        //     covid_obj.borderDash = [];
-        //     covid_obj.borderDashOffset = 0.0;
-        //     covid_obj.borderJoinStyle = 'miter';
-        //     covid_obj.pointBorderColor = 'rgba(75,192,192,1)';
-        //     covid_obj.pointBackgroundColor = '#fff';
-        //     covid_obj.pointBorderWidth = 1;
-        //     covid_obj.pointHoverRadius = 5;
-        //     covid_obj.pointHoverBackgroundColor = 'rgba(75,192,192,1)';
-        //     covid_obj.pointHoverBorderColor = 'rgba(220,220,220,1)';
-        //     covid_obj.pointHoverBorderWidth = 2;
-        //     covid_obj.pointRadius = 1;
-        //     covid_obj.pointHitRadius = 10;
-        //     covid_obj.data = Object.values(res.timeline.cases).map(Number)
-        //     latestDatasets.push(covid_obj)
-        //     setData({labels: latestLabels, datasets: latestDatasets})
-        //)
+      .then(res => {
+        console.log(res[`${selectedCountry}`])
+        let latestLabels = []
+        let latestDatasets = []
+        let covid_obj = {}
+        covid_obj.label = selectedCountry
+        covid_obj.fill = false;
+        covid_obj.lineTension = 0.1;
+        covid_obj.backgroundColor ='rgba(75,192,192,0.4)';
+        covid_obj.borderColor = 'rgba(75,192,192,1)';
+        covid_obj.borderCapStyle = 'butt';
+        covid_obj.borderDash = [];
+        covid_obj.borderDashOffset = 0.0;
+        covid_obj.borderJoinStyle = 'miter';
+        covid_obj.pointBorderColor = 'rgba(75,192,192,1)';
+        covid_obj.pointBackgroundColor = '#fff';
+        covid_obj.pointBorderWidth = 1;
+        covid_obj.pointHoverRadius = 5;
+        covid_obj.pointHoverBackgroundColor = 'rgba(75,192,192,1)';
+        covid_obj.pointHoverBorderColor = 'rgba(220,220,220,1)';
+        covid_obj.pointHoverBorderWidth = 2;
+        covid_obj.pointRadius = 1;
+        covid_obj.pointHitRadius = 10;
+        res[`${selectedCountry}`].map(o => console.log(o.confirmed))
+        covid_obj.data = res[`${selectedCountry}`].map(o => o.confirmed)
+        latestLabels = res[`${selectedCountry}`].map(o => o.date)
+        latestDatasets.push(covid_obj)
+        setData({labels: latestLabels, datasets: latestDatasets})
+
+        let pieChartLabels = ["Active Cases", "Number of deaths", "Recovered Cases"]
+        const latest_data = res[`${selectedCountry}`].length-1
+        console.log(res[`${selectedCountry}`][latest_data])
+
+        let pieChartDataPoints = [res[`${selectedCountry}`][latest_data].confirmed, res[`${selectedCountry}`][latest_data].deaths, res[`${selectedCountry}`][latest_data].recovered]
+        let pieChartData = {
+            labels: pieChartLabels,
+            datasets: [{
+                data: pieChartDataPoints,
+                backgroundColor: [
+                    '#FF6384',
+                    '#36A2EB',
+                    '#FFCE56'
+                ],
+                hoverBackgroundColor: [
+                    '#FF6384',
+                    '#36A2EB',
+                    '#FFCE56'
+                ]
+            }]
+        }
+
+        setPieData(pieChartData)
+        setActiveCases(res[`${selectedCountry}`][latest_data].confirmed)
+        setDeaths(res[`${selectedCountry}`][latest_data].deaths)
+        setRecoveredCases(res[`${selectedCountry}`][latest_data].recovered)
+
       })
-      // fetch(`https://corona.lmao.ninja/historical/${selectedCountry.toLowerCase()}`)
-      // .then(response => response.json())
-      // .then(res => {
-      //     console.log(res)
-      //     const keys = Object.keys(res.timeline.cases);
-      //     const currentKey = keys[keys.length - 1];
-      //     setActiveCases(res.timeline.cases[currentKey])
-      //     setDeaths(res.timeline.deaths[currentKey])
-      //     setRecoveredCases(res.timeline.recovered[currentKey])
-      //     // variables for line chart
-      //     let latestLabels = Object.keys(res.timeline.cases)
-      //     let latestDatasets = []
-      //     // variables for pie/doughnut chart
-      //     let pieChartLabels = ["Active Cases", "Number of deaths", "Recovered Cases"]
-      //     let pieChartDataPoints = [res.timeline.cases[currentKey], res.timeline.deaths[currentKey], res.timeline.recovered[currentKey]]
-      //     let pieChartData = {
-      //         labels: pieChartLabels,
-      //         datasets: [{
-      //             data: pieChartDataPoints,
-      //             backgroundColor: [
-      //                 '#FF6384',
-      //                 '#36A2EB',
-      //                 '#FFCE56'
-      //             ],
-      //             hoverBackgroundColor: [
-      //                 '#FF6384',
-      //                 '#36A2EB',
-      //                 '#FFCE56'
-      //             ]
-      //         }]
-      //     }
-
-      //     setPieData(pieChartData)
-
-      //     let covid_obj = {}
-      //     covid_obj.label = res.standardizedCountryName.toUpperCase()
-      //     covid_obj.fill = false;
-      //     covid_obj.lineTension = 0.1;
-      //     covid_obj.backgroundColor ='rgba(75,192,192,0.4)';
-      //     covid_obj.borderColor = 'rgba(75,192,192,1)';
-      //     covid_obj.borderCapStyle = 'butt';
-      //     covid_obj.borderDash = [];
-      //     covid_obj.borderDashOffset = 0.0;
-      //     covid_obj.borderJoinStyle = 'miter';
-      //     covid_obj.pointBorderColor = 'rgba(75,192,192,1)';
-      //     covid_obj.pointBackgroundColor = '#fff';
-      //     covid_obj.pointBorderWidth = 1;
-      //     covid_obj.pointHoverRadius = 5;
-      //     covid_obj.pointHoverBackgroundColor = 'rgba(75,192,192,1)';
-      //     covid_obj.pointHoverBorderColor = 'rgba(220,220,220,1)';
-      //     covid_obj.pointHoverBorderWidth = 2;
-      //     covid_obj.pointRadius = 1;
-      //     covid_obj.pointHitRadius = 10;
-      //     covid_obj.data = Object.values(res.timeline.cases).map(Number)
-      //     latestDatasets.push(covid_obj)
-      //     setData({labels: latestLabels, datasets: latestDatasets})
-      // })
-      // .catch(err => {
-        
-      // })
     } 
   }, [selectedCountry])
 
