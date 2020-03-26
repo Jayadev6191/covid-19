@@ -45,6 +45,11 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     alignItems: 'center'
   },
+  maintenanceAlert: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height:150
+  },
   appBar: {
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
@@ -105,12 +110,13 @@ export default function Chart() {
   const [open, setOpen] = useState(true);
   const [countries, setCountries] = useState(all_countries);
   const [filteredCountry, setFilteredCountry] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState('usa');
+  const [selectedCountry, setSelectedCountry] = useState('US');
   const [data, setData] = useState({labels: [], datasets: []})
   const [pieData, setPieData] = useState({labels: [], datasets: []})
   const [activeCases, setActiveCases] = useState('')
   const [deaths, setDeaths] = useState('')
   const [recoveredCases, setRecoveredCases] = useState('')
+  const [isMaintenanceModeOn, setMaintenance] = useState(true)
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -145,75 +151,115 @@ export default function Chart() {
   }
 
   useEffect(() => {
-        fetch("https://corona.lmao.ninja/countries")
-        .then(response => response.json())
-        .then(res => {
-            setCountries(res.map(o => {
-                all_countries.push(o.country)
-                return o.country
-            }))
-        })
-        .catch(err => console.log(err))
+    fetch("https://pomber.github.io/covid19/timeseries.json")
+      .then(response => response.json())
+      .then(res => {setCountries(Object.keys(res))})
+      .catch(err => {alert("hi")})
+
+    // fetch("https://corona.lmao.ninja/countries")
+    //   .then(response => response.json())
+    //   .then(res => {
+    //       setCountries(res.map(o => {
+    //           all_countries.push(o.country)
+    //           return o.country
+    //       }))
+    //   })
+    //   .catch(err => {
+    //     alert("hi")
+    //   })
   },[])
 
   useEffect(() => {
-    fetch(`https://corona.lmao.ninja/historical/${selectedCountry.toLowerCase()}`)
-    .then(response => response.json())
-    .then(res => {
-        const keys = Object.keys(res.timeline.cases);
-        const currentKey = keys[keys.length - 1];
-        setActiveCases(res.timeline.cases[currentKey])
-        setDeaths(res.timeline.deaths[currentKey])
-        setRecoveredCases(res.timeline.recovered[currentKey])
-        // variables for line chart
-        let latestLabels = Object.keys(res.timeline.cases)
-        let latestDatasets = []
-        // variables for pie/doughnut chart
-        let pieChartLabels = ["Active Cases", "Number of deaths", "Recovered Cases"]
-        let pieChartDataPoints = [res.timeline.cases[currentKey], res.timeline.deaths[currentKey], res.timeline.recovered[currentKey]]
-        let pieChartData = {
-            labels: pieChartLabels,
-            datasets: [{
-                data: pieChartDataPoints,
-                backgroundColor: [
-                    '#FF6384',
-                    '#36A2EB',
-                    '#FFCE56'
-                ],
-                hoverBackgroundColor: [
-                    '#FF6384',
-                    '#36A2EB',
-                    '#FFCE56'
-                ]
-            }]
-        }
+    if(selectedCountry) {
+      fetch("https://pomber.github.io/covid19/timeseries.json")
+      .then(response => response.json())
+      .then(data => {
+        // data[`${selectedCountry}`].forEach(({ date, confirmed, recovered, deaths }) =>
+        // let covid_obj = {}
+        //     covid_obj.label = res.standardizedCountryName.toUpperCase()
+        //     covid_obj.fill = false;
+        //     covid_obj.lineTension = 0.1;
+        //     covid_obj.backgroundColor ='rgba(75,192,192,0.4)';
+        //     covid_obj.borderColor = 'rgba(75,192,192,1)';
+        //     covid_obj.borderCapStyle = 'butt';
+        //     covid_obj.borderDash = [];
+        //     covid_obj.borderDashOffset = 0.0;
+        //     covid_obj.borderJoinStyle = 'miter';
+        //     covid_obj.pointBorderColor = 'rgba(75,192,192,1)';
+        //     covid_obj.pointBackgroundColor = '#fff';
+        //     covid_obj.pointBorderWidth = 1;
+        //     covid_obj.pointHoverRadius = 5;
+        //     covid_obj.pointHoverBackgroundColor = 'rgba(75,192,192,1)';
+        //     covid_obj.pointHoverBorderColor = 'rgba(220,220,220,1)';
+        //     covid_obj.pointHoverBorderWidth = 2;
+        //     covid_obj.pointRadius = 1;
+        //     covid_obj.pointHitRadius = 10;
+        //     covid_obj.data = Object.values(res.timeline.cases).map(Number)
+        //     latestDatasets.push(covid_obj)
+        //     setData({labels: latestLabels, datasets: latestDatasets})
+        //)
+      })
+      // fetch(`https://corona.lmao.ninja/historical/${selectedCountry.toLowerCase()}`)
+      // .then(response => response.json())
+      // .then(res => {
+      //     console.log(res)
+      //     const keys = Object.keys(res.timeline.cases);
+      //     const currentKey = keys[keys.length - 1];
+      //     setActiveCases(res.timeline.cases[currentKey])
+      //     setDeaths(res.timeline.deaths[currentKey])
+      //     setRecoveredCases(res.timeline.recovered[currentKey])
+      //     // variables for line chart
+      //     let latestLabels = Object.keys(res.timeline.cases)
+      //     let latestDatasets = []
+      //     // variables for pie/doughnut chart
+      //     let pieChartLabels = ["Active Cases", "Number of deaths", "Recovered Cases"]
+      //     let pieChartDataPoints = [res.timeline.cases[currentKey], res.timeline.deaths[currentKey], res.timeline.recovered[currentKey]]
+      //     let pieChartData = {
+      //         labels: pieChartLabels,
+      //         datasets: [{
+      //             data: pieChartDataPoints,
+      //             backgroundColor: [
+      //                 '#FF6384',
+      //                 '#36A2EB',
+      //                 '#FFCE56'
+      //             ],
+      //             hoverBackgroundColor: [
+      //                 '#FF6384',
+      //                 '#36A2EB',
+      //                 '#FFCE56'
+      //             ]
+      //         }]
+      //     }
 
-        setPieData(pieChartData)
+      //     setPieData(pieChartData)
 
-        let covid_obj = {}
-        covid_obj.label = res.standardizedCountryName.toUpperCase()
-        covid_obj.fill = false;
-        covid_obj.lineTension = 0.1;
-        covid_obj.backgroundColor ='rgba(75,192,192,0.4)';
-        covid_obj.borderColor = 'rgba(75,192,192,1)';
-        covid_obj.borderCapStyle = 'butt';
-        covid_obj.borderDash = [];
-        covid_obj.borderDashOffset = 0.0;
-        covid_obj.borderJoinStyle = 'miter';
-        covid_obj.pointBorderColor = 'rgba(75,192,192,1)';
-        covid_obj.pointBackgroundColor = '#fff';
-        covid_obj.pointBorderWidth = 1;
-        covid_obj.pointHoverRadius = 5;
-        covid_obj.pointHoverBackgroundColor = 'rgba(75,192,192,1)';
-        covid_obj.pointHoverBorderColor = 'rgba(220,220,220,1)';
-        covid_obj.pointHoverBorderWidth = 2;
-        covid_obj.pointRadius = 1;
-        covid_obj.pointHitRadius = 10;
-        covid_obj.data = Object.values(res.timeline.cases).map(Number)
-        latestDatasets.push(covid_obj)
-        setData({labels: latestLabels, datasets: latestDatasets})
-    })
-    .catch(err => console.log(err))
+      //     let covid_obj = {}
+      //     covid_obj.label = res.standardizedCountryName.toUpperCase()
+      //     covid_obj.fill = false;
+      //     covid_obj.lineTension = 0.1;
+      //     covid_obj.backgroundColor ='rgba(75,192,192,0.4)';
+      //     covid_obj.borderColor = 'rgba(75,192,192,1)';
+      //     covid_obj.borderCapStyle = 'butt';
+      //     covid_obj.borderDash = [];
+      //     covid_obj.borderDashOffset = 0.0;
+      //     covid_obj.borderJoinStyle = 'miter';
+      //     covid_obj.pointBorderColor = 'rgba(75,192,192,1)';
+      //     covid_obj.pointBackgroundColor = '#fff';
+      //     covid_obj.pointBorderWidth = 1;
+      //     covid_obj.pointHoverRadius = 5;
+      //     covid_obj.pointHoverBackgroundColor = 'rgba(75,192,192,1)';
+      //     covid_obj.pointHoverBorderColor = 'rgba(220,220,220,1)';
+      //     covid_obj.pointHoverBorderWidth = 2;
+      //     covid_obj.pointRadius = 1;
+      //     covid_obj.pointHitRadius = 10;
+      //     covid_obj.data = Object.values(res.timeline.cases).map(Number)
+      //     latestDatasets.push(covid_obj)
+      //     setData({labels: latestLabels, datasets: latestDatasets})
+      // })
+      // .catch(err => {
+        
+      // })
+    } 
   }, [selectedCountry])
 
   return (
@@ -240,80 +286,93 @@ export default function Chart() {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Drawer
-        className={classes.drawer}
-        variant="persistent"
-        anchor="left"
-        open={open}
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-      >
-        <div className={classes.drawerHeader}>
-          <FormControl fullWidth className={classes.margin} variant="filled">
-            <InputLabel htmlFor="filled-adornment-amount">Search for a country</InputLabel>
-            <Input
-                id="filled-adornment-amount"
-                value={filteredCountry}
-                onChange={handleFiterSearch}
-                endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="clear search input"
-                        onClick={handleClearFilter}
-                      >
-                        {filteredCountry ? <ClearIcon /> : null}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-            />
-          </FormControl>
-        </div>
-        <List>
-          {countries.map((text, index) => (
-            <ListItem button key={text} onClick={selectCountry} selected={text.toLowerCase() === selectedCountry.toLocaleLowerCase()}>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
-      <main
-        className={clsx(classes.content, {
-          [classes.contentShift]: open,
-        })}
-      >
-            <div className={classes.drawerHeader} />
-            <div className="main">
-                <div className="line">
-                    <Line data={data} options={options} />
-                </div>
-                <div className="pie">
-                    <Doughnut data={pieData} />
-                </div>
-                <Grid container className="grid">
-                    <Grid item xs={3}>
-                        <Typography variant="body2" component="p">
-                            Active Cases: {activeCases}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={3}>
-                        <Typography variant="body2" component="p">
-                            Number of deaths: {deaths}
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={3}>
-                        <Typography variant="body2" component="p">
-                            Recovered Cases: {recoveredCases}
-                        </Typography>
-                    </Grid>
-                </Grid>
-                <div className="alert">
-                    <Alert icon={false} elevation={6} variant="filled" severity="warning" className={clsx(classes.alert)} >
-                        <AlertTitle>Did you wash your hands yet <span aria-label="question" role="img">🤷🏽‍♂️</span>? <a href="https://www.youtube.com/watch?v=u4l35otdiHw" rel="noopener noreferrer" target="_blank">Watch here</a> Please follow social distancing, be safe and responsible</AlertTitle>
+      <React.Fragment>
+        <Drawer
+          className={classes.drawer}
+          variant="persistent"
+          anchor="left"
+          open={open}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+        >
+          <div className={classes.drawerHeader}>
+            <FormControl fullWidth className={classes.margin} variant="filled">
+              <InputLabel htmlFor="filled-adornment-amount">Search for a country</InputLabel>
+              <Input
+                  id="filled-adornment-amount"
+                  value={filteredCountry}
+                  onChange={handleFiterSearch}
+                  endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="clear search input"
+                          onClick={handleClearFilter}
+                        >
+                          {filteredCountry ? <ClearIcon /> : null}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+              />
+            </FormControl>
+          </div>
+          <List>
+            {countries.map((text, index) => (
+              <ListItem button key={text} onClick={selectCountry} selected={text.toLowerCase() === selectedCountry.toLocaleLowerCase()}>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+        </Drawer> 
+        <main
+          className={clsx(classes.content, {
+            [classes.contentShift]: open,
+          })}
+        >
+              <div className={classes.drawerHeader} />
+              <div className="main">
+                {
+                  isMaintenanceModeOn ?
+                  <div className="maintenance">
+                    <Alert icon={false} elevation={6} variant="filled" severity="Error" className={clsx(classes.maintenanceAlert)} >
+                        <AlertTitle>The site is in the maintenance mode. Will be back shortly!</AlertTitle>
                     </Alert>
-                </div>
-            </div>
-      </main>
+                  </div>:
+                  <React.Fragment>
+                      <div className="line">
+                          <Line data={data} options={options} />
+                      </div>
+                      <div className="pie">
+                          <Doughnut data={pieData} />
+                      </div>
+                      <Grid container className="grid">
+                          <Grid item xs={3}>
+                              <Typography variant="body2" component="p">
+                                  Active Cases: {activeCases}
+                              </Typography>
+                          </Grid>
+                          <Grid item xs={3}>
+                              <Typography variant="body2" component="p">
+                                  Number of deaths: {deaths}
+                              </Typography>
+                          </Grid>
+                          <Grid item xs={3}>
+                              <Typography variant="body2" component="p">
+                                  Recovered Cases: {recoveredCases}
+                              </Typography>
+                          </Grid>
+                      </Grid>
+                      <div className="alert">
+                          <Alert icon={false} elevation={6} variant="filled" severity="warning" className={clsx(classes.alert)} >
+                              <AlertTitle>Did you wash your hands yet <span aria-label="question" role="img">🤷🏽‍♂️</span>? <a href="https://www.youtube.com/watch?v=u4l35otdiHw" rel="noopener noreferrer" target="_blank">Watch here</a> Please follow social distancing, be safe and responsible</AlertTitle>
+                          </Alert>
+                      </div>
+                  </React.Fragment>
+                }
+              </div>
+        </main>
+      
+      </React.Fragment>
     </div>
   );
 }
