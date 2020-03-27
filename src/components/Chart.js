@@ -87,7 +87,7 @@ const useStyles = makeStyles(theme => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3),
+    padding: theme.spacing(1),
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -183,16 +183,20 @@ export default function Chart() {
         covid_obj.pointBorderColor = 'rgba(75,192,192,1)';
         covid_obj.pointBackgroundColor = '#fff';
         covid_obj.pointBorderWidth = 1;
-        covid_obj.pointHoverRadius = 5;
+        covid_obj.pointHoverRadius = 10;
         covid_obj.pointHoverBackgroundColor = 'rgba(75,192,192,1)';
         covid_obj.pointHoverBorderColor = 'rgba(220,220,220,1)';
         covid_obj.pointHoverBorderWidth = 2;
-        covid_obj.pointRadius = 1;
+        covid_obj.pointRadius = 5;
         covid_obj.pointHitRadius = 10;
         res[`${selectedCountry}`].map(o => console.log(o.confirmed))
         covid_obj.data = res[`${selectedCountry}`].map(o => o.confirmed)
-        latestLabels = res[`${selectedCountry}`].map(o => o.date)
+        latestLabels = res[`${selectedCountry}`].map(o => {
+          console.log(o)
+          return o.date
+        })
         latestDatasets.push(covid_obj)
+        console.log(latestLabels)
         setData({labels: latestLabels, datasets: latestDatasets})
 
         let pieChartLabels = ["Active Cases", "Number of deaths", "Recovered Cases"]
@@ -303,12 +307,6 @@ export default function Chart() {
                     </Alert>
                   </div>:
                   <React.Fragment>
-                      <div className="line">
-                          <Line data={data} options={options} />
-                      </div>
-                      <div className="pie">
-                          <Doughnut data={pieData} />
-                      </div>
                       <Grid container className="grid">
                           <Grid item xs={3}>
                               <Typography variant="body2" component="p">
@@ -326,6 +324,13 @@ export default function Chart() {
                               </Typography>
                           </Grid>
                       </Grid>
+                      <div className="line">
+                          <Line data={data} options={options} />
+                      </div>
+                      <div className="pie">
+                          <Doughnut data={pieData} />
+                      </div>
+                  
                       <div className="alert">
                           <Alert icon={false} elevation={6} variant="filled" severity="warning" className={clsx(classes.alert)} >
                               <AlertTitle>Did you wash your hands yet <span aria-label="question" role="img">🤷🏽‍♂️</span>? <a href="https://www.youtube.com/watch?v=u4l35otdiHw" rel="noopener noreferrer" target="_blank">Watch here</a> Please follow social distancing, be safe and responsible</AlertTitle>
