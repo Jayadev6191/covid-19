@@ -1,30 +1,34 @@
 import React, {useState, useEffect} from 'react';
+import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Alert from '@material-ui/lab/Alert';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
+import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
-import List from '@material-ui/core/List';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import Grid from '@material-ui/core/Grid';
+import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import MenuIcon from '@material-ui/icons/Menu';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
 import ClearIcon from '@material-ui/icons/Clear';
-import './Chart.css'
 import {Line, Doughnut} from 'react-chartjs-2'
+
+import './Chart.css'
+
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+
 const drawerWidth = 240;
 
-var options = {
+const options = {
     legend: {
         display: true
     },
@@ -38,85 +42,51 @@ var options = {
     }
 };
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-  },
-  alert: {
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  maintenanceAlert: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    height:150
-  },
-  appBar: {
-    [theme.breakpoints.up('sm')]: {
-      width: `calc(100% - ${drawerWidth}px)`,
-      marginLeft: drawerWidth,
-    },
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    width: `calc(100% - ${drawerWidth}px)`,
-    marginLeft: drawerWidth,
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  hide: {
-    display: 'none',
   },
   drawer: {
     [theme.breakpoints.up('sm')]: {
       width: drawerWidth,
       flexShrink: 0,
     },
-    width: drawerWidth,
-    flexShrink: 0,
   },
+  appBar: {
+    [theme.breakpoints.up('sm')]: {
+      width: `calc(100% - ${drawerWidth}px)`,
+      marginLeft: drawerWidth,
+    },
+  },
+  main: {
+    [theme.breakpoints.up('sm')]: {
+        width: `100%`,
+        marginLeft: 0,
+        backgroundColor: 'red'
+      },
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up('sm')]: {
+      display: 'none',
+    },
+  },
+  // necessary for content to be below app bar
+  toolbar: theme.mixins.toolbar,
   drawerPaper: {
     width: drawerWidth,
   },
-  drawerHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-    justifyContent: 'flex-end',
-  },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(1),
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    marginLeft: -drawerWidth,
-  },
-  contentShift: {
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    marginLeft: 0,
+    padding: theme.spacing(3),
   },
 }));
 
 let all_countries = []
 
-export default function Chart() {
+function ResponsiveChart(props) {
   const classes = useStyles();
-  const [open, setOpen] = useState(true);
+  // const [open, setOpen] = useState(true);
   const [countries, setCountries] = useState(all_countries);
   const [filteredCountry, setFilteredCountry] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('US');
@@ -128,9 +98,8 @@ export default function Chart() {
   const [isMaintenanceModeOn, setMaintenance] = useState(false)
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
+  const { container } = props;
+  const theme = useTheme();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -163,40 +132,6 @@ export default function Chart() {
         setSelectedCountry(e.target.textContent)
     }
   }
-
-  const drawer = (
-    <React.Fragment>
-      <div className={classes.drawerHeader}>
-          <FormControl fullWidth className={classes.margin} variant="filled">
-            <InputLabel htmlFor="filled-adornment-amount">Search for a country</InputLabel>
-            <Input
-                id="filled-adornment-amount"
-                value={filteredCountry}
-                onChange={handleFiterSearch}
-                endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="clear search input"
-                        onClick={handleClearFilter}
-                      >
-                        {filteredCountry ? <ClearIcon /> : null}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-            />
-          </FormControl>
-      </div>
-      <List>
-        {countries.map((text, index) => (
-          <ListItem button key={text} onClick={selectCountry} selected={text.toLowerCase() === selectedCountry.toLocaleLowerCase()}>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
-    </React.Fragment>
-  )
-
-  
 
   useEffect(() => {
     fetch("https://pomber.github.io/covid19/timeseries.json")
@@ -278,78 +213,91 @@ export default function Chart() {
     } 
   }, [selectedCountry])
 
+  const drawer = (
+    <React.Fragment>
+      <div className={classes.drawerHeader}>
+          <FormControl fullWidth className={classes.margin} variant="filled">
+            <InputLabel htmlFor="filled-adornment-amount">Search for a country</InputLabel>
+            <Input
+                id="filled-adornment-amount"
+                value={filteredCountry}
+                onChange={handleFiterSearch}
+                endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="clear search input"
+                        onClick={handleClearFilter}
+                      >
+                        {filteredCountry ? <ClearIcon /> : null}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+            />
+          </FormControl>
+      </div>
+      <List>
+        {countries.map((text, index) => (
+          <ListItem button key={text} onClick={selectCountry} selected={text.toLowerCase() === selectedCountry.toLocaleLowerCase()}>
+            <ListItemText primary={text} />
+          </ListItem>
+        ))}
+      </List>
+    </React.Fragment>
+  );
+
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar
-        position="fixed"
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
-        })}
-      >
+      <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <IconButton
             color="inherit"
             aria-label="open drawer"
-            onClick={handleDrawerOpen}
             edge="start"
-            className={clsx(classes.menuButton, open && classes.hide)}
+            onClick={handleDrawerToggle}
+            className={classes.menuButton}
           >
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            Covid-19 Statistics
+            Covid-19 Visualizer
           </Typography>
         </Toolbar>
       </AppBar>
-      
-        <nav className={classes.drawer} aria-label="mailbox folders">
-          {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-          <Hidden smUp implementation="css">
-            <Drawer
-              variant="temporary"
-              anchor="left"
-              open={mobileOpen}
-              onClose={handleDrawerToggle}
-              classes={{
-                paper: classes.drawerPaper,
-              }}
-              ModalProps={{
-                keepMounted: true, // Better open performance on mobile.
-              }}
-            >
-              {drawer}
-            </Drawer>
-          </Hidden>
-          <Hidden xsDown implementation="css">
-            <Drawer
-              classes={{
-                paper: classes.drawerPaper,
-              }}
-              variant="permanent"
-              open
-            >
-              {drawer}
-            </Drawer>
-          </Hidden>
-        </nav>
-        {/* <Drawer
-          className={classes.drawer}
-          variant="persistent"
-          anchor="left"
-          open={open}
-          classes={{
-            paper: classes.drawerPaper,
-          }}
-        >
-          
-        </Drawer>  */}
-        <main
-          className={clsx(classes.content, {
-            [classes.contentShift]: open,
-          })}
-        >
-              <div className={classes.drawerHeader} />
+      <nav className={classes.drawer} aria-label="mailbox folders">
+        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+        <Hidden smUp implementation="css">
+          <Drawer
+            container={container}
+            variant="temporary"
+            anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+            ModalProps={{
+              keepMounted: true, // Better open performance on mobile.
+            }}
+          >
+            {drawer}
+          </Drawer>
+        </Hidden>
+        <Hidden xsDown implementation="css">
+          <Drawer
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+            variant="permanent"
+            open
+          >
+            {drawer}
+          </Drawer>
+        </Hidden>
+      </nav>
+      <main className={classes.content}>
+        <div className={classes.toolbar} />
+        <div className={classes.drawerHeader} />
               <div className="main">
                 {
                   isMaintenanceModeOn ?
@@ -391,9 +339,17 @@ export default function Chart() {
                   </React.Fragment>
                 }
               </div>
-        </main>
-      
-       
+      </main>
     </div>
   );
 }
+
+ResponsiveChart.propTypes = {
+  /**
+   * Injected by the documentation to work in an iframe.
+   * You won't need it on your project.
+   */
+  container: PropTypes.any,
+};
+
+export default ResponsiveChart;
