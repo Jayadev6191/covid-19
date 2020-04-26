@@ -1,5 +1,5 @@
 ## Covid-19
 
-The idea of this project is to help people identify the patterns of this pandemic over the last month all around the world
+Covid-19 Case Visualizer for countries all over the world
 
-[Realtime Live Dashboard](https://laughing-engelbart-42ce45.netlify.com/)
+[Realtime Live Dashboard](https://www.covidstatz.info/)

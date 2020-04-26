@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-// import Chart from './components/Chart'
 import ResponsiveChart from './components/ResponsiveChart'
 import './App.css';
 

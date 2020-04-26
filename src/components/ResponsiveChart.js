@@ -6,9 +6,7 @@ import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Alert from '@material-ui/lab/Alert';
 import AlertTitle from '@material-ui/lab/AlertTitle';
-import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
-import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card'
@@ -19,7 +17,7 @@ import { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import Switch from '@material-ui/core/Switch';
 import {allCountries} from "../utils/flag"
 import {Line, Doughnut, defaults} from 'react-chartjs-2'
-import './Chart.css'
+import './ResponsiveChart.css'
 
 import { makeStyles } from '@material-ui/core/styles';
 
