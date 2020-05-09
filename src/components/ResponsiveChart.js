@@ -17,6 +17,8 @@ import { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import Switch from '@material-ui/core/Switch';
 import {allCountries} from "../utils/flag"
 import {Line, Doughnut, defaults} from 'react-chartjs-2'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faVirus, faChartLine, faChartPie } from '@fortawesome/free-solid-svg-icons'
 import './ResponsiveChart.css'
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -83,6 +85,7 @@ function CovidAppBar(props) {
   return (
     <AppBar position="fixed" className={classes.appBar}>
       <Toolbar>
+        <FontAwesomeIcon icon={faVirus} />
         <Typography variant="h6" noWrap>
           Covid-19 Visualizer
         </Typography>
@@ -120,7 +123,7 @@ function CovidMainContent(props) {
     },
     switchBase: {
       padding: 2,
-      color: theme.palette.grey[500],
+      color: '#3f51b5',
       '&$checked': {
         transform: 'translateX(12px)',
         color: theme.palette.common.white,
@@ -268,11 +271,24 @@ function CovidMainContent(props) {
           </Grid>
       </Card>
       <Grid component="label" container spacing={1} id="switch_container">
-          <Grid item>Pie Chart</Grid>
+          <Grid item>
+            <FontAwesomeIcon 
+              icon={faChartPie} size="lg" 
+              className={lineView ? 'fa-disabled' : ''}
+              color={lineView ? '' : '#3f51b5'}
+            />
+          </Grid>
           <Grid item>
             <AntSwitch checked={lineView} onChange={handleChangeChartView} name="checkedC" />
           </Grid>
-          <Grid item>Line Chart</Grid>
+          <Grid item>
+            <FontAwesomeIcon 
+              icon={faChartLine} 
+              size="lg" 
+              className={lineView ? '' : 'fa-disabled'}
+              color={lineView ? '#3f51b5' : ''}
+            />
+          </Grid>
       </Grid>
       {
         lineView ?
