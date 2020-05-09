@@ -285,6 +285,9 @@ function CovidMainContent(props) {
           <Doughnut data={pieData} height={400} />
         </div>
       }
+      <div className="author">
+          Made by <a target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/jayadev-akkiraju-b947576a/">Jay Akkiraju <span role="img" aria-label="developer">👨🏻‍💻</span></a>
+      </div>
     </React.Fragment>
   )
 }

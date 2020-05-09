@@ -37,6 +37,12 @@
     height: 60vh;
 }
 
+.author a {
+    text-decoration: none;
+    color: #3f51b5;
+    font-weight: 600;
+}
+
 .card {
     margin-top: 20px;
     margin-bottom: 20px;
